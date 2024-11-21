@@ -1,24 +1,36 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import axios from "axios";
+import AppContext from "../Context/Context";
 
 const Home = () => {
+  const { data, isError, refreshData } = useContext(AppContext);
   const [products, setProducts] = useState([]);
-  const [isError, setIsError] = useState(false);
+  const [isDataFetched, setIsDataFetched] = useState(false);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get("http://localhost:8080/api/products");
-        setProducts(response.data);
-        console.log(response.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        setIsError(true);
-      }
-    };
+    if (!isDataFetched) {
+      refreshData();
+      setIsDataFetched(true);
+    }
+  }, [refreshData, isDataFetched]);
 
-    fetchData();
-  }, []);
+  useEffect(() => {
+    if (data && data.length > 0) {
+      const fetchData = async () => {
+        try {
+          const response = await axios.get(
+            "http://localhost:8081/api/products"
+          );
+          setProducts(response.data);
+          console.log(response.data);
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      };
+      fetchData();
+    }
+  }, [data]);
 
   if (isError) {
     return (
@@ -36,63 +48,55 @@ const Home = () => {
             className="card mb-3"
             key={product.id}
             style={{
-              width: "270px",
-              height: "210px",
-              boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
-              borderRadius: "10px",
-              overflow: "hidden",
-
+              width: "18rem",
+              height: "14rem",
+              boxShadow: "rgba(0, 0, 0, 0.24) 0px 2px 3px",
+              margin: "10px",
               display: "flex",
               flexDirection: "column",
-              justifyContent: "flex-start",
-              alignItems: "stretch",
             }}
           >
-            <div
-              className="card-body"
-              style={{
-                flexGrow: 1,
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
-                padding: "10px",
-              }}
+            <Link
+              to={`/product/${product.id}`}
+              style={{ textDecoration: "none", color: "inherit" }}
             >
-              <div>
-                <h5
-                  className="card-title"
-                  style={{ margin: "0 0 10px 0", fontSize: "1.2rem" }}
-                >
-                  {product.name.toUpperCase()}
-                </h5>
-                <i
-                  className="card-brand"
-                  style={{ fontStyle: "italic", fontSize: "0.8rem" }}
-                >
-                  {"by " + product.brand}
-                </i>
-              </div>
-              <hr className="hr-line" style={{ margin: "10px 0" }} />
-              <div className="home-cart-price">
-                <h5
-                  className="card-text"
-                  style={{
-                    fontWeight: "600",
-                    fontSize: "1.1rem",
-                    marginBottom: "5px",
-                  }}
-                >
-                  <i className="bi bi-currency-rupee"></i>
-                  {product.price}
-                </h5>
-              </div>
-              <button
-                className="btn-hover color-9"
-                style={{ margin: "10px 25px 0px " }}
+              <div
+                className="card-body"
+                style={{
+                  flexGrow: 1,
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
+                  padding: "10px",
+                }}
               >
-                Add To Cart
-              </button>
-            </div>
+                <div>
+                  <h5 className="card-title" style={{ margin: "0 0 10px 0" }}>
+                    {product.name.toUpperCase()}
+                  </h5>
+                  <span className="card-brand">
+                    by <i style={{ fontStyle: "italic" }}>{product.brand}</i>
+                  </span>
+                </div>
+                <div>
+                  <h5
+                    className="card-text"
+                    style={{ fontWeight: "600", margin: "10px 0" }}
+                  >
+                    {"$" + product.price}
+                  </h5>
+                  <button
+                    className="btn btn-primary"
+                    style={{ width: "100%", marginTop: "15px" }}
+                    onClick={(e) => {
+                      e.preventDefault();
+                    }}
+                  >
+                    Add to Cart
+                  </button>
+                </div>
+              </div>
+            </Link>
           </div>
         ))}
       </div>
