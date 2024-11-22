@@ -2,8 +2,10 @@ package org.vz.ecomerce.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.vz.ecomerce.model.Product;
 import org.vz.ecomerce.service.ProductService;
 
@@ -28,8 +30,16 @@ public class ProductController {
     }
 
     @PostMapping("/products")
-    public void addProducts(@RequestBody Product prod){
-         service.addProducts(prod);
+    public ResponseEntity<?> addProducts(@RequestPart Product product , @RequestPart MultipartFile imageFile){
+
+        try {
+            Product product1=service.addProducts(product, imageFile);
+            System.out.println(product1);
+            return new ResponseEntity<>(product1 , HttpStatus.CREATED);
+        }
+        catch (Exception e){
+            return new ResponseEntity<>(e.getMessage() , HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @GetMapping("products/{id}")
@@ -40,5 +50,16 @@ public class ProductController {
             return new ResponseEntity(service.getProductById(id) , HttpStatus.OK);
         else
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("products/{productId}/image")
+    public  ResponseEntity<byte[]> getImageByProductId(@PathVariable int productId){
+        Product product=service.getProductById(productId);
+
+        byte[] imageFile=product.getImageData();
+
+        return ResponseEntity.ok().contentType(MediaType
+                .valueOf(product.getImageType()))
+                .body(imageFile);
     }
 }
