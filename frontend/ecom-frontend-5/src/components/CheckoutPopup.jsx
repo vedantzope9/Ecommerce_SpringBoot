@@ -13,7 +13,7 @@ const CheckoutPopup = ({ show, handleClose, cartItems, totalPrice, handleCheckou
         <div className="checkout-items">
           {cartItems.map((item) => (
             <div key={item.id} className="checkout-item" style={{ display: 'flex', marginBottom: '10px' }}>
-              <img src={item.imageUrl} alt={item.name} style={{ width: '200px', marginRight: '10px' }} />
+              <img src={item.imageUrl} alt={item.name} className="cart-item-image" style={{ width: '150px', marginRight: '10px' }} />
               <div>
                 <b><p>{item.name}</p></b>
                 <p>Quantity: {item.quantity}</p>
@@ -21,8 +21,8 @@ const CheckoutPopup = ({ show, handleClose, cartItems, totalPrice, handleCheckou
               </div>
             </div>
           ))}
-          <div className="total" >
-            <h5>Total: ${totalPrice}</h5>
+          <div >
+            <h5 style={{color:'black' , display:'flex',justifyContent:'center',fontSize:'1.3rem', fontWeight:'bold'}} >Total: ${totalPrice}</h5>
           </div>
         </div>
       </Modal.Body>

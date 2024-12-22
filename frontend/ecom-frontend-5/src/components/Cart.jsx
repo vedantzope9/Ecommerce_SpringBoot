@@ -273,6 +273,7 @@ const Cart = () => {
 
   useEffect(() => {
     const fetchImagesAndUpdateCart = async () => {
+      console.log("Cart", cart);
       try {
         const response = await axios.get("http://localhost:8080/api/products");
         const backendProductIds = response.data.map((product) => product.id);
@@ -404,11 +405,7 @@ const Cart = () => {
                   style={{ display: "flex", alignContent: "center" }}
                   key={item.id}
                 >
-                  <div className="buttons">
-                    <div className="buttons-liked">
-                      <i className="bi bi-heart"></i>
-                    </div>
-                  </div>
+                 
                   <div>
                     <img
                       src={item.imageUrl}
@@ -477,6 +474,7 @@ const Cart = () => {
         handleCheckout={handleCheckout}
       />
     </div>
+
   );
 };
 
