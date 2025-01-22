@@ -152,8 +152,8 @@ const Home = ({ selectedCategory }) => {
                         className="card-text"
                         style={{ fontWeight: "600", fontSize: "1.1rem",marginBottom:'5px' }}
                       >
-                        <i class="bi bi-currency-rupee"></i>
-                        {price}
+                        {/* <i class="bi bi-currency-rupee"></i> */}
+                        {"$"+ price}
                       </h5>
                     </div>
                     <button
